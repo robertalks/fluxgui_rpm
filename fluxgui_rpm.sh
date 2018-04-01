@@ -153,10 +153,11 @@ Name:             ${RPM_PACKAGE_NAME}
 Version:          ${FLUXGUI_VERSION}
 Release:          ${RPM_REVISION}
 Summary:          f.lux indicator applet is an indicator applet to control xflux
-License:          None
+License:          BSD
 Vendor:           f.lux
 Group:            System/X11/Utilities
 URL:              https://justgetflux.com/
+BugURL:           https://github.com/xflux-gui/fluxgui/issues
 ExcludeArch:      noarch
 BuildRequires:    python >= 2.7
 Requires:         python-appindicator
