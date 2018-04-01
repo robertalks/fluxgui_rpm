@@ -125,15 +125,16 @@ Name:             ${RPM_PACKAGE_NAME}
 Version:          ${FLUXGUI_VERSION}
 Release:          ${RPM_REVISION}
 Summary:          f.lux indicator applet is an indicator applet to control xflux
-License:          MPL-2.0
+License:          None
 Vendor:           f.lux
+Group:            System/X11/Utilities
 URL:              https://justgetflux.com/
 ExcludeArch:      noarch
 BuildRequires:    python >= 2.7
-Requires:         python-appindicator >= 12.10.1
-Requires:         python-gconf >= 2.28
-Requires:         python-xdg >= 0.25
-Requires:         python-pexpect >= 3.3
+Requires:         python-appindicator
+Requires:         python-gconf
+Requires:         python-xdg
+Requires:         python-pexpect
 Requires(post):   coreutils shared-mime-info desktop-file-utils
 Requires(postun): shared-mime-info desktop-file-utils
 Packager:         Robert Milasan <robert@linux-source.org>
@@ -144,7 +145,6 @@ application that makes the color of your computer's display adapt to the time
 of day, warm at nights and like sunlight during the day
 
 %build
-# python setup.py install --root=\$RPM_BUILD_ROOT
 
 %install
 python setup.py install --root=\$RPM_BUILD_ROOT
@@ -161,7 +161,7 @@ if test -x /usr/bin/gtk-update-icon-cache; then
       ubuntu-mono-light ubuntu-mono-dark hicolor; do
       if [ -d "/usr/share/icons/\${icons}" ]; then
          echo "Updating \${icons} icon cache ..."
-         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" || true
+         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" >/dev/null 1>&2 || true
       fi
     done
 fi
@@ -174,7 +174,7 @@ if [ \$1 -eq 0 ]; then
       ubuntu-mono-light ubuntu-mono-dark hicolor; do
       if [ -d "/usr/share/icons/\${icons}" ]; then
          echo "Updating \${icons} icon cache ..."
-         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" || true
+         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" >/dev/null 1>&2 || true
       fi
     done
   fi
