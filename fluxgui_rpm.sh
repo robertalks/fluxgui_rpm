@@ -53,8 +53,35 @@ fluxgui_clone() {
 fluxgui_get_version() {
 	local app_version=
 
-	app_version="$(sed -n '/.*version =/ s/.*"\([0-9].*\)~.*/\1/p' ${RPM_BUILD_PATH}/BUILD/setup.py)"
+	app_version="$(sed -n '/.*version =/ s/.*"\([0-9].*\)".*/\1/p' ${RPM_BUILD_PATH}/BUILD/setup.py)"
 	FLUXGUI_VERSION=$app_version
+}
+
+fluxgui_release() {
+	local new_version="$1"
+	local old_version=""
+	local release=""
+
+	if [ -r "${CWD}/.version" ]; then
+		old_version="$(cat ${CWD}/.version)"
+	else
+		echo "$new_version" > ${CWD}/.version
+	fi
+	if [ -r "${CWD}/.release" ]; then
+		release=$(cat ${CWD}/.release)
+	else
+		release=0
+	fi
+
+	if [ "$new_version" == "$old_version" ]; then
+		release=$(($release + 1))
+	else
+		release=0
+	fi
+
+	echo "$release" > ${CWD}/.release
+
+	RPM_REVISION=$release
 }
 
 while getopts "ha:" opt; do
@@ -75,7 +102,7 @@ fi
 
 case "${RPM_ARCH}" in
 	i386)
-		PACKAGE_ARCH="pre"
+		PACKAGE_ARCH="-pre"
 		_ARCH="${PACKAGE_ARCH}"
 	;;
 	x86_64)
@@ -96,9 +123,10 @@ if [ "${FLUXGUI_VERSION}" == "" ]; then
 	exit 1
 fi
 
+fluxgui_release ${FLUXGUI_VERSION}
+
 XFLUX_PACKAGE_URL="https://justgetflux.com/linux/xflux${PACKAGE_ARCH}.tgz"
 RPM_PACKAGE_NAME="fluxgui"
-RPM_REVISION="1"
 RPM_PACKAGE="${RPM_PACKAGE_NAME}-${FLUXGUI_VERSION}-${RPM_REVISION}.${RPM_ARCH}.rpm"
 
 printf "Downloading xflux (xflux${PACKAGE_ARCH}.tgz) ... "
@@ -161,7 +189,7 @@ if test -x /usr/bin/gtk-update-icon-cache; then
       ubuntu-mono-light ubuntu-mono-dark hicolor; do
       if [ -d "/usr/share/icons/\${icons}" ]; then
          echo "Updating \${icons} icon cache ..."
-         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" >/dev/null 1>&2 || true
+         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" >/dev/null 2>&1 || true
       fi
     done
 fi
@@ -174,7 +202,7 @@ if [ \$1 -eq 0 ]; then
       ubuntu-mono-light ubuntu-mono-dark hicolor; do
       if [ -d "/usr/share/icons/\${icons}" ]; then
          echo "Updating \${icons} icon cache ..."
-         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" >/dev/null 1>&2 || true
+         /usr/bin/gtk-update-icon-cache --quiet --force "/usr/share/icons/\${icons}" >/dev/null 2>&1 || true
       fi
     done
   fi
@@ -196,14 +224,23 @@ rm -rfv \$RPM_BUILD_ROOT
 
 %files
 %defattr(0644, root, root, 0755)
-%dir /usr/bin
-%dir /usr/lib/python2.7
-%dir /usr/share
 %attr(755,root,root) /usr/bin/fluxgui
 %attr(755,root,root) /usr/bin/xflux
-/usr/bin/fluxgui
-/usr/bin/xflux
-/usr/lib/*
+/usr/lib/python*/site-packages/f.lux_indicator_applet-*-py2.*.egg-info
+/usr/lib/python*/site-packages/fluxgui
+/usr/lib/python*/site-packages/fluxgui/__init__.py
+/usr/lib/python*/site-packages/fluxgui/__init__.pyc
+/usr/lib/python*/site-packages/fluxgui/exceptions.py
+/usr/lib/python*/site-packages/fluxgui/exceptions.pyc
+/usr/lib/python*/site-packages/fluxgui/fluxapp.py
+/usr/lib/python*/site-packages/fluxgui/fluxapp.pyc
+/usr/lib/python*/site-packages/fluxgui/fluxcontroller.py
+/usr/lib/python*/site-packages/fluxgui/fluxcontroller.pyc
+/usr/lib/python*/site-packages/fluxgui/preferences.glade
+/usr/lib/python*/site-packages/fluxgui/settings.py
+/usr/lib/python*/site-packages/fluxgui/settings.pyc
+/usr/lib/python*/site-packages/fluxgui/xfluxcontroller.py
+/usr/lib/python*/site-packages/fluxgui/xfluxcontroller.pyc
 /usr/share/applications/fluxgui.desktop
 /usr/share/icons/elementary-xfce-dark/panel/22/fluxgui-panel.svg
 /usr/share/icons/elementary-xfce/panel/22/fluxgui-panel.svg
