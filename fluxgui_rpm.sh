@@ -164,6 +164,11 @@ Requires:         python-appindicator
 Requires:         python-gconf
 Requires:         python-xdg
 Requires:         python-pexpect
+%if 0%{?suse_version}
+Requires:         libXss1
+%else
+Requires:         libXScrnSaver
+%endif
 Requires(post):   coreutils shared-mime-info desktop-file-utils
 Requires(postun): shared-mime-info desktop-file-utils
 Packager:         Robert Milasan <robert@linux-source.org>
