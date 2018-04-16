@@ -79,6 +79,7 @@ fluxgui_release() {
 		release=0
 	fi
 
+	echo "$new_version" > ${CWD}/.version
 	echo "$release" > ${CWD}/.release
 
 	RPM_REVISION=$release
